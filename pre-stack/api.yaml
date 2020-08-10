@@ -52,13 +52,7 @@ paths:
                 "winner": "$input.path(''$.Item.winner.S'')"
                 }'
 
-      # x-amazon-apigateway-gateway-responses:
-      # responses:
-      #   "200":
-      #     responseTemplates:
-      #       application/json:
-      #         schema:
-      #           $ref: "#/components/schemas/PostBody"
+
 
 ## Validation models
 components:

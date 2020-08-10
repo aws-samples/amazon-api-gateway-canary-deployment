@@ -31,7 +31,7 @@ Resources:
       StageName: Prod
       EndpointConfiguration: REGIONAL
       CanarySetting:
-        PercentTraffic: 50
+        PercentTraffic: 10
       TracingEnabled: true
       MethodSettings:
         - HttpMethod: "*"
@@ -51,15 +51,7 @@ Resources:
           Parameters:
             Location: "./api.yaml"
 
-  # ## APT Gateway Canary Settings
-  # ExplicitApiDeployment:
-    # Type: "AWS::ApiGateway::Deployment"
-    # Properties:
-      # RestApiId: !Ref SiteAPI
-      # Description: RestApi deployment
-      # StageName: Prod
-      # DeploymentCanarySettings:
-        # PercentTraffic: 90.00
+  
 
   ##   URL DynamoDB Table
   DataTable:
@@ -72,12 +64,7 @@ Resources:
         - AttributeName: year
           AttributeType: S
       BillingMode: PAY_PER_REQUEST
-  # {
-  #   "country": "Germany",
-  #   "runner-up": "France",
-  #   "winner": "Italy",
-  #   "year": "2006"
-  # }
+
   ###################################################################################################
   ##   IAM Roles                                                                                   ##
   ###################################################################################################

@@ -53,13 +53,6 @@ paths:
                 "runner-up": "$input.path(''$.Item.runner-up.S'')"
                 }'
 
-      # x-amazon-apigateway-gateway-responses:
-      # responses:
-      #   "200":
-      #     responseTemplates:
-      #       application/json:
-      #         schema:
-      #           $ref: "#/components/schemas/PostBody"
 
 ## Validation models
 components:
