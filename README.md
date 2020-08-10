@@ -1,7 +1,6 @@
 # Amazon API Gateway Canary Release Deployment
 This stack creates an end to end implementation example to show how to do canary release deployment in Amazon API Gateway.
 
-## The Backend
 
 ### Services Used
 * <a href="https://aws.amazon.com/api-gateway/" target="_blank">Amazon API Gateway</a>
@@ -58,7 +57,7 @@ After the first deploy you need to deploy the canary stack. Go to canary-stack f
 
 ## Cleanup
 1. Open the <a href="https://us-west-2.console.aws.amazon.com/cloudformation/home" target="_blank">CloudFormation console</a>
-1. Locate a stack named *URLShortener*
+1. Locate a stack named *sam-app* 
 1. Select the radio option next to it
 1. Select **Delete**
 1. Select **Delete stack** to confirm
