@@ -1,0 +1,152 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Canary Deployment
+###################################################################################################
+##   Template Parameters                                                                         ##
+###################################################################################################
+Parameters:
+  AppName:
+    Type: String
+    Description: Name of application (no spaces). Value must be globally unique
+    Default: canary-deployment
+  UseLocalClient:
+    Type: String
+    Description: Enables public client and local client for testing. (Less secure)
+    Default: "false"
+
+###################################################################################################
+##   Template Conditions                                                                         ##
+###################################################################################################
+Conditions:
+  IsLocal: !Equals [!Ref UseLocalClient, "true"]
+
+###################################################################################################
+##   Template Resources                                                                          ##
+###################################################################################################
+Resources:
+  ##   API Gateway
+  SiteAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      EndpointConfiguration: REGIONAL
+      CanarySetting:
+        PercentTraffic: 50
+      TracingEnabled: true
+      MethodSettings:
+        - HttpMethod: "*"
+          ResourcePath: "/*"
+          LoggingLevel: INFO
+          DataTraceEnabled: true
+          MetricsEnabled: true
+          ThrottlingRateLimit: 2000
+          ThrottlingBurstLimit: 1000
+        - HttpMethod: "GET"
+          ResourcePath: "/{year}"
+          ThrottlingRateLimit: 10000
+          ThrottlingBurstLimit: 4000
+      DefinitionBody:
+        "Fn::Transform":
+          Name: "AWS::Include"
+          Parameters:
+            Location: "./api.yaml"
+
+  # ## APT Gateway Canary Settings
+  # ExplicitApiDeployment:
+    # Type: "AWS::ApiGateway::Deployment"
+    # Properties:
+      # RestApiId: !Ref SiteAPI
+      # Description: RestApi deployment
+      # StageName: Prod
+      # DeploymentCanarySettings:
+        # PercentTraffic: 90.00
+
+  ##   URL DynamoDB Table
+  DataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      KeySchema:
+        - AttributeName: year
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: year
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+  # {
+  #   "country": "Germany",
+  #   "runner-up": "France",
+  #   "winner": "Italy",
+  #   "year": "2006"
+  # }
+  ###################################################################################################
+  ##   IAM Roles                                                                                   ##
+  ###################################################################################################
+
+  ##   API Gateway Role
+  APIGatewayRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ##   Dynamo DB Read Role
+  DDBReadRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "apigateway.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Policies:
+        - PolicyName: DDBReadPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              Action:
+                - dynamodb:GetItem
+              Effect: Allow
+              Resource: !GetAtt DataTable.Arn
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
+  ###################################################################################################
+  ##   Metrics outputs                                                                            ##
+  ###################################################################################################
+
+  NotifyTopic:
+    Type: AWS::SNS::Topic
+
+  DDB5xxAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: "Canary Deployment DDB 5xx Alarm"
+      AlarmDescription: "System monitor"
+      MetricName: "SystemErrors"
+      Namespace: "AWS/DynamoDB"
+      Dimensions:
+        - Name: "TableName"
+          Value: !Ref DataTable
+      Statistic: "Average"
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: .01
+      ComparisonOperator: "GreaterThanThreshold"
+      AlarmActions:
+        - !Ref NotifyTopic
+
+Outputs:
+  AppName:
+    Description: Name
+    Value: !Ref AppName

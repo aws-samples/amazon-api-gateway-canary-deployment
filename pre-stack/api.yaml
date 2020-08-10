@@ -1,0 +1,108 @@
+openapi: "3.0.1"
+info:
+  title: "Canary Deployment"
+  version: "1.0.0"
+
+x-amazon-apigateway-request-validators:
+  all:
+    validateRequestBody: true
+    validateRequestParameters: true
+  params:
+    validateRequestBody: false
+    validateRequestParameters: true
+  body:
+    validateRequestBody: true
+    validateRequestParameters: false
+
+paths:
+  /{year}:
+    get:
+      x-amazon-apigateway-request-validator: params
+      responses:
+        "200":
+          description: "200 redirect"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostBody"
+
+      ## API Gateway Integration
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::GetAtt: [DDBReadRole, Arn]
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/GetItem",
+          }
+        httpMethod: "POST"
+        requestTemplates:
+          application/json:
+            {
+              "Fn::Sub": '{"Key": {"year": {"S": "$input.params("year")"}}, "TableName": "${DataTable}"}',
+            }
+        passthroughBehavior: "when_no_templates"
+        type: "aws"
+        responses:
+          "":
+            statusCode: "200"
+            responseTemplates:
+              application/json: '{
+                "year": "$input.path(''$.Item.year.S'')",
+                "country": "$input.path(''$.Item.country.S'')",
+                "winner": "$input.path(''$.Item.winner.S'')"
+                }'
+
+      # x-amazon-apigateway-gateway-responses:
+      # responses:
+      #   "200":
+      #     responseTemplates:
+      #       application/json:
+      #         schema:
+      #           $ref: "#/components/schemas/PostBody"
+
+## Validation models
+components:
+  schemas:
+    PostBody:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+      required:
+        - id
+        - url
+    PutBody:
+      type: object
+      properties:
+        id:
+          type: string
+        url:
+          type: string
+          pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+        timestamp:
+          type: string
+        owner:
+          type: string
+      required:
+        - id
+        - url
+        - timestamp
+        - owner
+  parameters:
+    authHeader:
+      in: header
+      name: Authorization
+      required: true
+      description: Contains authorization token
+      schema:
+        type: string
+    yearHeader:
+      in: path
+      name: year
+      required: true
+      description: Canary Short ID of full URL
+      schema:
+        type: string
