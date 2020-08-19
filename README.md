@@ -53,8 +53,6 @@ SAM will then deploy the AWS CloudFormation stack to your AWS account and provid
 After the first deploy you need to deploy the canary stack. Go to canary-stack folder and repeat the deployment using "sam deploy" same as above. Choose the default for all options
 
 
-*Note: this is only required for the first build subsequent client builds will be triggered when updates are committed to your forked repository.
-
 ## Cleanup
 1. Open the <a href="https://us-east-1.console.aws.amazon.com/cloudformation/home" target="_blank">CloudFormation console</a>
 1. Locate a stack named *sam-app* 
