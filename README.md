@@ -6,6 +6,7 @@ This stack creates an end to end implementation example to show how to do canary
 * <a href="https://aws.amazon.com/api-gateway/" target="_blank">Amazon API Gateway</a>
 * <a href="https://aws.amazon.com/dynamodb/" target="_bank">Amazon DynamoDB</a>
 * <a href="https://aws.amazon.com/iam/" target="_blank">AWS IAM</a>
+* <a href="https://aws.amazon.com/cloudwatch/" target="_blank">Amazon CloudWatch</a>
 * <a href="https://aws.amazon.com/s3/" target="_blank">Amazon S3</a>
 
 
