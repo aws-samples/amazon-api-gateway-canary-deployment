@@ -56,7 +56,7 @@ After the first deploy you need to deploy the canary stack. Go to canary-stack f
 *Note: this is only required for the first build subsequent client builds will be triggered when updates are committed to your forked repository.
 
 ## Cleanup
-1. Open the <a href="https://us-west-2.console.aws.amazon.com/cloudformation/home" target="_blank">CloudFormation console</a>
+1. Open the <a href="https://us-east-1.console.aws.amazon.com/cloudformation/home" target="_blank">CloudFormation console</a>
 1. Locate a stack named *sam-app* 
 1. Select the radio option next to it
 1. Select **Delete**
