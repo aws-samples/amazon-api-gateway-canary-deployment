@@ -52,51 +52,56 @@ paths:
                 "winner": "$input.path(''$.Item.winner.S'')",
                 "runner-up": "$input.path(''$.Item.runner-up.S'')"
                 }'
-
-
+      # x-amazon-apigateway-gateway-responses:
+      # responses:
+      #   "200":
+      #     responseTemplates:
+      #       application/json:
+      #         schema:
+      #           $ref: "#/components/schemas/PostBody"
 ## Validation models
-components:
-  schemas:
-    PostBody:
-      type: object
-      properties:
-        id:
-          type: string
-        url:
-          type: string
-          pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
-      required:
-        - id
-        - url
-    PutBody:
-      type: object
-      properties:
-        id:
-          type: string
-        url:
-          type: string
-          pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
-        timestamp:
-          type: string
-        owner:
-          type: string
-      required:
-        - id
-        - url
-        - timestamp
-        - owner
-  parameters:
-    authHeader:
-      in: header
-      name: Authorization
-      required: true
-      description: Contains authorization token
-      schema:
-        type: string
-    yearHeader:
-      in: path
-      name: year
-      required: true
-      description: Canary Short ID of full URL
-      schema:
-        type: string
+# components:
+#   schemas:
+#     PostBody:
+#       type: object
+#       properties:
+#         id:
+#           type: string
+#         url:
+#           type: string
+#           pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+#       required:
+#         - id
+#         - url
+#     PutBody:
+#       type: object
+#       properties:
+#         id:
+#           type: string
+#         url:
+#           type: string
+#           pattern: ^https?://[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
+#         timestamp:
+#           type: string
+#         owner:
+#           type: string
+#       required:
+#         - id
+#         - url
+#         - timestamp
+#         - owner
+#   parameters:
+#     authHeader:
+#       in: header
+#       name: Authorization
+#       required: true
+#       description: Contains authorization token
+#       schema:
+#         type: string
+#     yearHeader:
+#       in: path
+#       name: year
+#       required: true
+#       description: Canary Short ID of full URL
+#       schema:
+#         type: string
