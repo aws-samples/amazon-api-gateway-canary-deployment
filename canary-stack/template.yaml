@@ -20,6 +20,8 @@ Resources:
     Properties:
       StageName: Prod
       EndpointConfiguration: REGIONAL
+      CanarySetting:
+        PercentTraffic: 90
       TracingEnabled: true
       MethodSettings:
         - HttpMethod: "GET"
@@ -29,16 +31,6 @@ Resources:
           Name: "AWS::Include"
           Parameters:
             Location: "./api.yaml"
-
-  # ## APT Gateway Canary Settings
-  ExplicitApiDeployment:
-    Type: "AWS::ApiGateway::Deployment"
-    Properties:
-      RestApiId: !Ref SiteAPI
-      Description: RestApi deployment
-      StageName: Prod
-      DeploymentCanarySettings:
-        PercentTraffic: 90.00
 
   ##   URL DynamoDB Table
   DataTable:

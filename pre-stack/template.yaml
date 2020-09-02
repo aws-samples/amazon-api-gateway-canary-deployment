@@ -20,6 +20,8 @@ Resources:
     Properties:
       StageName: Prod
       EndpointConfiguration: REGIONAL
+      CanarySetting:
+        PercentTraffic: 100
       TracingEnabled: true
       MethodSettings:
         - HttpMethod: "GET"
