@@ -53,21 +53,6 @@ Resources:
   ##   IAM Roles                                                                                   ##
   ###################################################################################################
 
-  ##   API Gateway Role
-  APIGatewayRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service: "apigateway.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
-
   ##   Dynamo DB Read Role
   DDBReadRole:
     Type: "AWS::IAM::Role"
@@ -91,6 +76,7 @@ Resources:
               Resource: !GetAtt DataTable.Arn
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs
+
 
   ###################################################################################################
   ##   Metrics outputs                                                                            ##
